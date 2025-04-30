@@ -65,6 +65,9 @@ const restaurantData = {
 // We’ll refer to restaurantData[area] → array of entries.
 // `weight` lets us give low-chance items a smaller slice in the wheel.
 // ============================================
+// State holders
+let selectedArea = null;
+let selectedHealth = null;
 
 // ====== PHASE 1: Render area choices ======
 const areasContainer = document.getElementById('areas');
