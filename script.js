@@ -68,19 +68,85 @@ const restaurantData = {
 
 // ====== PHASE 1: Render area choices ======
 const areasContainer = document.getElementById('areas');
-
 Object.keys(restaurantData).forEach(area => {
   const card = document.createElement('div');
   card.className = 'area-card';
-  // if you have an image for the area, use <img>; else show text:
-  // card.innerHTML = `<img src="images/${area.toLowerCase()}.jpg"><span>${area}</span>`;
   card.textContent = area;
   card.addEventListener('click', () => onAreaSelect(area));
   areasContainer.append(card);
 });
 
+// State holders
+let selectedArea = null;
+let selectedHealth = null;
+
+// ====== PHASE 2: Area → Health-level ======
 function onAreaSelect(area) {
-  // TODO → Phase 2: show category selection for this area
-  console.log('Selected area:', area);
+  selectedArea = area;
+  document.getElementById('area-section').hidden = true;
+  document.getElementById('category-section').hidden = false;
+  renderHealthOptions();
 }
 
+function renderHealthOptions() {
+  const opts = [
+    { label: 'Healthy',     value: 'healthy' },
+    { label: 'Less Healthy',value: 'lessHealthy' },
+    { label: 'All',         value: 'all' }
+  ];
+  const container = document.getElementById('health-options');
+  container.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'big-option-button';
+    btn.textContent = opt.label;
+    btn.addEventListener('click'),() => onHealthSelect(opt.value)
+    btn.addEventListener('click', () => onHealthSelect(opt.value));
+    container.append(btn);
+  });
+}
+
+function onHealthSelect(health) {
+  selectedHealth = health;
+  document.getElementById('category-section').hidden = true;
+  document.getElementById('subcategory-section').hidden = false;
+  renderSubcategories();
+}
+
+// ====== PHASE 2: Health-level → Sub-categories ======
+function renderSubcategories() {
+  // define your “healthy” vs “less healthy” category lists
+  const healthyCats     = ['cafe','street','buffet','korean','noodles'];
+  const lessHealthyCats = ['fastFood','mexican','convenience','chinese'];
+
+  const items = restaurantData[selectedArea];
+  let filtered;
+  if (selectedHealth === 'all') {
+    filtered = items;
+  } else if (selectedHealth === 'healthy') {
+    filtered = items.filter(r => healthyCats.includes(r.category));
+  } else {
+    filtered = items.filter(r => lessHealthyCats.includes(r.category));
+  }
+
+  // unique categories in this filtered set
+  const cats = [...new Set(filtered.map(r => r.category))];
+  const container = document.getElementById('subcategories');
+  container.innerHTML = '';
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'subcat-button';
+    btn.textContent = cat;
+    btn.addEventListener('click', () => onSubcategorySelect(cat));
+    container.append(btn);
+  });
+}
+
+function onSubcategorySelect(subcat) {
+  console.log('→ Final selection:', {
+    area:      selectedArea,
+    health:    selectedHealth,
+    subcategory: subcat
+  });
+  // TODO: PHASE 3 → Spin-the-wheel of restaurantData[selectedArea].filter(...)
+}
