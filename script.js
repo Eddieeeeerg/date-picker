@@ -84,13 +84,12 @@ const restaurantData = {
   ]
 };
 
-// ======= STATE HOLDERS =======
-let selectedArea        = null;
-let selectedHealth      = null;
-let selectedSubcategory = null;
+  // ======= STATE HOLDERS =======
+  let selectedArea = null;
+  let selectedHealth = null;
+  let selectedSubcategory = null;
 
-// ====== PHASE 1: Render Area Cards ======
-(function renderAreas() {
+  // ======= PHASE 1: RENDER AREA CARDS =======
   const areasContainer = document.getElementById('areas');
   areasContainer.innerHTML = '';
   Object.keys(restaurantData).forEach(area => {
@@ -98,9 +97,8 @@ let selectedSubcategory = null;
     card.className = 'area-card';
     card.textContent = area;
     card.addEventListener('click', () => onAreaSelect(area));
-    areasContainer.append(card);
+    areasContainer.appendChild(card);
   });
-})();
 
 // ====== PHASE 2: Area → Health-level ======
 function onAreaSelect(area) {
@@ -135,11 +133,44 @@ function onHealthSelect(health) {
   renderSubcategories();
 }
 
+// ====== PHASE 2: Area → Health-level ======
+function onAreaSelect(area) {
+  selectedArea = area;
+  document.getElementById('area-section').hidden     = true;
+  document.getElementById('category-section').hidden = false;
+  renderHealthOptions();
+}
+
+function renderHealthOptions() {
+  const opts = [
+    { label: 'Healthy',      value: 'healthy'    },
+    { label: 'Less Healthy', value: 'lessHealthy'},
+    { label: 'All',          value: 'all'        }
+  ];
+  const container = document.getElementById('health-options');
+  container.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'big-option-button';
+    btn.textContent = opt.label;
+    btn.addEventListener('click', () => onHealthSelect(opt.value));
+    container.appendChild(btn);
+  });
+}
+
+function onHealthSelect(health) {
+  selectedHealth = health;
+  document.getElementById('category-section').hidden     = true;
+  document.getElementById('subcategory-section').hidden  = false;
+  renderSubcategories();
+}
+
 // ====== PHASE 2: Health-level → Sub-categories ======
 function renderSubcategories() {
   const healthyCats     = ['cafe','street','buffet','korean','noodles'];
   const lessHealthyCats = ['fastFood','mexican','convenience','chinese'];
 
+  // get all restaurants for the selected area
   const items = restaurantData[selectedArea] || [];
   let filtered;
   if (selectedHealth === 'all') {
@@ -150,16 +181,16 @@ function renderSubcategories() {
     filtered = items.filter(r => lessHealthyCats.includes(r.category));
   }
 
+  // pull out unique category names
   const cats = [...new Set(filtered.map(r => r.category))];
   const container = document.getElementById('subcategories');
   container.innerHTML = '';
-
   cats.forEach(cat => {
     const btn = document.createElement('button');
     btn.className = 'subcat-button';
     btn.textContent = cat;
     btn.addEventListener('click', () => onSubcategorySelect(cat));
-    container.append(btn);
+    container.appendChild(btn);
   });
 }
 
@@ -170,9 +201,8 @@ function onSubcategorySelect(subcat) {
     health:      selectedHealth,
     subcategory: selectedSubcategory
   });
-  // Now you can proceed to Phase 3 (spin the wheel)…
+  // → here you’d call your Phase 3 spinner
 }
-
 
 
 
