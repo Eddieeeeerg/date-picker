@@ -66,34 +66,33 @@ const restaurantData = {
 // `weight` lets us give low-chance items a smaller slice in the wheel.
 // ============================================
 // script.js
+// script.js
 
-// Wait until the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
+// ======= STUB RESTAURANT DATA =======
+const restaurantData = {
+  "Coex": [
+    {
+      name:     "KFC Coex Mall",
+      category: "fastFood",
+      avgCost:  25000,
+      weight:   2,
+      url:      "https://naver.me/GKUf5aQz",
+      img:      "images/kfc-coex.jpg",
+      open:     "10:30",
+      close:    "22:00"
+    }
+  ]
+};
 
-  // ———— STUB DATA ————
-  // A minimal valid object so nothing breaks.
-  const restaurantData = {
-    "Coex": [
-      {
-        name:     "KFC Coex Mall",
-        category: "fastFood",
-        avgCost:  25000,
-        weight:   2,
-        url:      "https://naver.me/GKUf5aQz",
-        img:      "images/kfc-coex.jpg",
-        open:     "10:30",
-        close:    "22:00"
-      }
-    ]
-  };
+// ======= STATE HOLDERS =======
+let selectedArea        = null;
+let selectedHealth      = null;
+let selectedSubcategory = null;
 
-  // ———— STATE HOLDERS ————
-  let selectedArea        = null;
-  let selectedHealth      = null;
-  let selectedSubcategory = null;
-
-  // ====== PHASE 1: Render area choices ======
+// ====== PHASE 1: Render Area Cards ======
+(function renderAreas() {
   const areasContainer = document.getElementById('areas');
+  areasContainer.innerHTML = '';
   Object.keys(restaurantData).forEach(area => {
     const card = document.createElement('div');
     card.className = 'area-card';
@@ -101,79 +100,79 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', () => onAreaSelect(area));
     areasContainer.append(card);
   });
+})();
 
-  // ====== PHASE 2: Area → Health-level ======
-  function onAreaSelect(area) {
-    selectedArea = area;
-    document.getElementById('area-section').hidden     = true;
-    document.getElementById('category-section').hidden = false;
-    renderHealthOptions();
+// ====== PHASE 2: Area → Health-level ======
+function onAreaSelect(area) {
+  selectedArea = area;
+  document.getElementById('area-section').hidden     = true;
+  document.getElementById('category-section').hidden = false;
+  renderHealthOptions();
+}
+
+function renderHealthOptions() {
+  const opts = [
+    { label: 'Healthy',      value: 'healthy'    },
+    { label: 'Less Healthy', value: 'lessHealthy'},
+    { label: 'All',          value: 'all'        }
+  ];
+  const container = document.getElementById('health-options');
+  container.innerHTML = '';
+
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'big-option-button';
+    btn.textContent = opt.label;
+    btn.addEventListener('click', () => onHealthSelect(opt.value));
+    container.append(btn);
+  });
+}
+
+function onHealthSelect(health) {
+  selectedHealth = health;
+  document.getElementById('category-section').hidden      = true;
+  document.getElementById('subcategory-section').hidden   = false;
+  renderSubcategories();
+}
+
+// ====== PHASE 2: Health-level → Sub-categories ======
+function renderSubcategories() {
+  const healthyCats     = ['cafe','street','buffet','korean','noodles'];
+  const lessHealthyCats = ['fastFood','mexican','convenience','chinese'];
+
+  const items = restaurantData[selectedArea] || [];
+  let filtered;
+  if (selectedHealth === 'all') {
+    filtered = items;
+  } else if (selectedHealth === 'healthy') {
+    filtered = items.filter(r => healthyCats.includes(r.category));
+  } else {
+    filtered = items.filter(r => lessHealthyCats.includes(r.category));
   }
 
-  function renderHealthOptions() {
-    const opts = [
-      { label: 'Healthy',      value: 'healthy'    },
-      { label: 'Less Healthy', value: 'lessHealthy'},
-      { label: 'All',          value: 'all'        }
-    ];
-    const container = document.getElementById('health-options');
-    container.innerHTML = '';
+  const cats = [...new Set(filtered.map(r => r.category))];
+  const container = document.getElementById('subcategories');
+  container.innerHTML = '';
 
-    opts.forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = 'big-option-button';
-      btn.textContent = opt.label;
-      btn.addEventListener('click', () => onHealthSelect(opt.value));
-      container.append(btn);
-    });
-  }
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'subcat-button';
+    btn.textContent = cat;
+    btn.addEventListener('click', () => onSubcategorySelect(cat));
+    container.append(btn);
+  });
+}
 
-  function onHealthSelect(health) {
-    selectedHealth = health;
-    document.getElementById('category-section').hidden      = true;
-    document.getElementById('subcategory-section').hidden   = false;
-    renderSubcategories();
-  }
+function onSubcategorySelect(subcat) {
+  selectedSubcategory = subcat;
+  console.log('Final selection:', {
+    area:        selectedArea,
+    health:      selectedHealth,
+    subcategory: selectedSubcategory
+  });
+  // Now you can proceed to Phase 3 (spin the wheel)…
+}
 
-  // ====== PHASE 2: Health-level → Sub-categories ======
-  function renderSubcategories() {
-    const healthyCats     = ['cafe','street','buffet','korean','noodles'];
-    const lessHealthyCats = ['fastFood','mexican','convenience','chinese'];
-
-    const items = restaurantData[selectedArea] || [];
-    let filtered;
-    if (selectedHealth === 'all') {
-      filtered = items;
-    } else if (selectedHealth === 'healthy') {
-      filtered = items.filter(r => healthyCats.includes(r.category));
-    } else {
-      filtered = items.filter(r => lessHealthyCats.includes(r.category));
-    }
-
-    const cats = [...new Set(filtered.map(r => r.category))];
-    const container = document.getElementById('subcategories');
-    container.innerHTML = '';
-
-    cats.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.className = 'subcat-button';
-      btn.textContent = cat;
-      btn.addEventListener('click', () => onSubcategorySelect(cat));
-      container.append(btn);
-    });
-  }
-
-  function onSubcategorySelect(subcat) {
-    selectedSubcategory = subcat;
-    console.log('Final selection:', {
-      area:        selectedArea,
-      health:      selectedHealth,
-      subcategory: selectedSubcategory
-    });
-    // now you can proceed to Phase 3 (spin the wheel)…
-  }
-
-});
 
 
 
