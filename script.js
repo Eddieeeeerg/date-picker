@@ -65,73 +65,21 @@ const restaurantData = {
 // We’ll refer to restaurantData[area] → array of entries.
 // `weight` lets us give low-chance items a smaller slice in the wheel.
 // ============================================
-// script.js
-// script.js
+// ====== STATE HOLDERS ======
+let selectedArea        = null;
+let selectedHealth      = null;
+let selectedSubcategory = null;
 
-// ======= STUB RESTAURANT DATA =======
-const restaurantData = {
-  "Coex": [
-    {
-      name:     "KFC Coex Mall",
-      category: "fastFood",
-      avgCost:  25000,
-      weight:   2,
-      url:      "https://naver.me/GKUf5aQz",
-      img:      "images/kfc-coex.jpg",
-      open:     "10:30",
-      close:    "22:00"
-    }
-  ]
-};
-
-  // ======= STATE HOLDERS =======
-  let selectedArea = null;
-  let selectedHealth = null;
-  let selectedSubcategory = null;
-
-  // ======= PHASE 1: RENDER AREA CARDS =======
-  const areasContainer = document.getElementById('areas');
-  areasContainer.innerHTML = '';
-  Object.keys(restaurantData).forEach(area => {
-    const card = document.createElement('div');
-    card.className = 'area-card';
-    card.textContent = area;
-    card.addEventListener('click', () => onAreaSelect(area));
-    areasContainer.appendChild(card);
-  });
-
-// ====== PHASE 2: Area → Health-level ======
-function onAreaSelect(area) {
-  selectedArea = area;
-  document.getElementById('area-section').hidden     = true;
-  document.getElementById('category-section').hidden = false;
-  renderHealthOptions();
-}
-
-function renderHealthOptions() {
-  const opts = [
-    { label: 'Healthy',      value: 'healthy'    },
-    { label: 'Less Healthy', value: 'lessHealthy'},
-    { label: 'All',          value: 'all'        }
-  ];
-  const container = document.getElementById('health-options');
-  container.innerHTML = '';
-
-  opts.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'big-option-button';
-    btn.textContent = opt.label;
-    btn.addEventListener('click', () => onHealthSelect(opt.value));
-    container.append(btn);
-  });
-}
-
-function onHealthSelect(health) {
-  selectedHealth = health;
-  document.getElementById('category-section').hidden      = true;
-  document.getElementById('subcategory-section').hidden   = false;
-  renderSubcategories();
-}
+// ====== PHASE 1: Render Area Cards ======
+const areasContainer = document.getElementById('areas');
+areasContainer.innerHTML = '';
+Object.keys(restaurantData).forEach(area => {
+  const card = document.createElement('div');
+  card.className = 'area-card';
+  card.textContent = area;
+  card.addEventListener('click', () => onAreaSelect(area));
+  areasContainer.appendChild(card);
+});
 
 // ====== PHASE 2: Area → Health-level ======
 function onAreaSelect(area) {
@@ -160,8 +108,8 @@ function renderHealthOptions() {
 
 function onHealthSelect(health) {
   selectedHealth = health;
-  document.getElementById('category-section').hidden     = true;
-  document.getElementById('subcategory-section').hidden  = false;
+  document.getElementById('category-section').hidden    = true;
+  document.getElementById('subcategory-section').hidden = false;
   renderSubcategories();
 }
 
@@ -170,7 +118,6 @@ function renderSubcategories() {
   const healthyCats     = ['cafe','street','buffet','korean','noodles'];
   const lessHealthyCats = ['fastFood','mexican','convenience','chinese'];
 
-  // get all restaurants for the selected area
   const items = restaurantData[selectedArea] || [];
   let filtered;
   if (selectedHealth === 'all') {
@@ -181,7 +128,6 @@ function renderSubcategories() {
     filtered = items.filter(r => lessHealthyCats.includes(r.category));
   }
 
-  // pull out unique category names
   const cats = [...new Set(filtered.map(r => r.category))];
   const container = document.getElementById('subcategories');
   container.innerHTML = '';
@@ -201,7 +147,7 @@ function onSubcategorySelect(subcat) {
     health:      selectedHealth,
     subcategory: selectedSubcategory
   });
-  // → here you’d call your Phase 3 spinner
+  // ← here you’ll hook in your Phase 3 spinner
 }
 
 
