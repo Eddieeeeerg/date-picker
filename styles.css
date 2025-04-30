@@ -33,3 +33,33 @@ h1 { font-size: 1.8rem; }
 .area-card span {
   position: absolute; bottom: 8px; font-weight: bold; font-size: 0.9rem;
 }
+/* Phase 2: health-level buttons */
+.big-option-button {
+  padding: 1rem 2rem;
+  margin: 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 8px;
+  background: #cdeac0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.big-option-button:hover {
+  background: #b6d8a8;
+}
+
+/* Phase 2: sub-category buttons */
+.subcat-button {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #f0e68c;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.subcat-button:hover {
+  background: #e5d95c;
+}
+
