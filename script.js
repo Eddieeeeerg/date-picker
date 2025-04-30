@@ -91,7 +91,7 @@ function renderHealthOptions() {
   const opts = [
     { label: 'Healthy',      value: 'healthy'    },
     { label: 'Less Healthy', value: 'lessHealthy'},
-    { label: 'All',          value: 'all'        },
+    { label: 'All',          value: 'all'        }
   ];
   const container = document.getElementById('health-options');
   container.innerHTML = '';
@@ -100,7 +100,6 @@ function renderHealthOptions() {
     const btn = document.createElement('button');
     btn.className = 'big-option-button';
     btn.textContent = opt.label;
-    // ← single, correct listener:
     btn.addEventListener('click', () => onHealthSelect(opt.value));
     container.append(btn);
   });
@@ -108,10 +107,49 @@ function renderHealthOptions() {
 
 function onHealthSelect(health) {
   selectedHealth = health;
-  document.getElementById('category-section').hidden    = true;
-  document.getElementById('subcategory-section').hidden = false;
+  document.getElementById('category-section').hidden      = true;
+  document.getElementById('subcategory-section').hidden   = false;
   renderSubcategories();
 }
+
+// ====== PHASE 2: Health-level → Sub-categories ======
+function renderSubcategories() {
+  const healthyCats     = ['cafe','street','buffet','korean','noodles'];
+  const lessHealthyCats = ['fastFood','mexican','convenience','chinese'];
+
+  const items = restaurantData[selectedArea] || [];
+  let filtered;
+  if (selectedHealth === 'all') {
+    filtered = items;
+  } else if (selectedHealth === 'healthy') {
+    filtered = items.filter(r => healthyCats.includes(r.category));
+  } else {
+    filtered = items.filter(r => lessHealthyCats.includes(r.category));
+  }
+
+  const cats = [...new Set(filtered.map(r => r.category))];
+  const container = document.getElementById('subcategories');
+  container.innerHTML = '';
+
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'subcat-button';
+    btn.textContent = cat;
+    btn.addEventListener('click', () => onSubcategorySelect(cat));
+    container.append(btn);
+  });
+}
+
+function onSubcategorySelect(subcat) {
+  selectedSubcategory = subcat;
+  console.log('Final selection:', {
+    area:        selectedArea,
+    health:      selectedHealth,
+    subcategory: subcat
+  });
+  // hide subcategory section and proceed to your Phase 3 spin logic…
+}
+
 
   // TODO: PHASE 3 → Spin-the-wheel of restaurantData[selectedArea].filter(...)
 }
