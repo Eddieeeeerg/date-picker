@@ -150,3 +150,65 @@ function onSubcategorySelect(subcat) {
   });
   // TODO: PHASE 3 → Spin-the-wheel of restaurantData[selectedArea].filter(...)
 }
+
+// ====== PHASE 3: Sub-category → Spin-the-wheel ======
+function onSubcategorySelect(subcat) {
+  // build the list of restaurants to spin
+  const all = restaurantData[selectedArea];
+  wheelItems = all.filter(r => r.category === subcat);
+  showWheel();
+}
+
+function showWheel() {
+  // hide subcats, show wheel
+  document.getElementById('subcategory-section').hidden = true;
+  const wheelSec = document.getElementById('wheel-section');
+  wheelSec.hidden = false;
+
+  // prepare segments weighted by `weight`
+  const totalW = wheelItems.reduce((sum, r) => sum + r.weight, 0);
+  const segments = wheelItems.map(r => ({
+    text: r.name,
+    size: (r.weight / totalW) * 360
+  }));
+
+  // initialize Winwheel
+  wheel = new Winwheel({
+    canvasId: 'restaurant-wheel',
+    numSegments: segments.length,
+    segments: segments,
+    animation: {
+      type: 'spinToStop',
+      duration: 5,
+      spins: 8,
+      callbackFinished: onWheelStop
+    }
+  });
+
+  // start spin on button click
+  document.getElementById('spin-button').onclick = () => {
+    document.getElementById('spin-button').disabled = true;
+    wheel.startAnimation();
+  };
+}
+
+function onWheelStop() {
+  const indicated = wheel.getIndicatedSegment();
+  const rest = wheelItems.find(r => r.name === indicated.text);
+  displayResult(rest);
+}
+
+function displayResult(r) {
+  const resDiv = document.getElementById('wheel-result');
+  resDiv.innerHTML = `
+    <img src="${r.img}" alt="${r.name}">
+    <div class="info">
+      <h3>${r.name}</h3>
+      <p>Average Cost: ₩${r.avgCost}</p>
+      <p>Hours: ${r.open} – ${r.close}</p>
+      ${r.url ? `<p><a href="${r.url}" target="_blank">View on Naver Map</a></p>` : ''}
+      <button onclick="window.location.reload()">Start Over</button>
+    </div>
+  `;
+}
+
