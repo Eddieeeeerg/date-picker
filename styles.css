@@ -63,3 +63,28 @@ h1 { font-size: 1.8rem; }
   background: #e5d95c;
 }
 
+/* ==== Phase 3: Wheel styles ==== */
+#wheel-section { margin-top: 2rem; }
+#restaurant-wheel { 
+  border: 2px solid #e5c6cb; 
+  border-radius: 50%; 
+}
+#spin-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #c0c0ff;
+  cursor: pointer;
+}
+#spin-button:hover { background: #a8a8e0; }
+#wheel-result { margin-top: 1.5rem; }
+#wheel-result img { 
+  max-width: 200px; 
+  border-radius: 8px; 
+}
+#wheel-result .info { margin-top: 1rem; }
+#wheel-result a { color: #d85c7a; text-decoration: none; }
+
+
