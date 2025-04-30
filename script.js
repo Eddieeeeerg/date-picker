@@ -90,17 +90,18 @@ function onAreaSelect(area) {
 
 function renderHealthOptions() {
   const opts = [
-    { label: 'Healthy',     value: 'healthy' },
-    { label: 'Less Healthy',value: 'lessHealthy' },
-    { label: 'All',         value: 'all' }
+    { label: 'Healthy',      value: 'healthy'    },
+    { label: 'Less Healthy', value: 'lessHealthy'},
+    { label: 'All',          value: 'all'        }
   ];
   const container = document.getElementById('health-options');
   container.innerHTML = '';
+
   opts.forEach(opt => {
     const btn = document.createElement('button');
     btn.className = 'big-option-button';
     btn.textContent = opt.label;
-    btn.addEventListener('click'),() => onHealthSelect(opt.value)
+    // ← only one listener, no stray comma:
     btn.addEventListener('click', () => onHealthSelect(opt.value));
     container.append(btn);
   });
@@ -115,7 +116,6 @@ function onHealthSelect(health) {
 
 // ====== PHASE 2: Health-level → Sub-categories ======
 function renderSubcategories() {
-  // define your “healthy” vs “less healthy” category lists
   const healthyCats     = ['cafe','street','buffet','korean','noodles'];
   const lessHealthyCats = ['fastFood','mexican','convenience','chinese'];
 
@@ -129,10 +129,10 @@ function renderSubcategories() {
     filtered = items.filter(r => lessHealthyCats.includes(r.category));
   }
 
-  // unique categories in this filtered set
   const cats = [...new Set(filtered.map(r => r.category))];
   const container = document.getElementById('subcategories');
   container.innerHTML = '';
+
   cats.forEach(cat => {
     const btn = document.createElement('button');
     btn.className = 'subcat-button';
@@ -144,10 +144,12 @@ function renderSubcategories() {
 
 function onSubcategorySelect(subcat) {
   console.log('→ Final selection:', {
-    area:      selectedArea,
-    health:    selectedHealth,
+    area:        selectedArea,
+    health:      selectedHealth,
     subcategory: subcat
   });
+  // …then kick off your Phase 3 spin logic…
+}
   // TODO: PHASE 3 → Spin-the-wheel of restaurantData[selectedArea].filter(...)
 }
 
